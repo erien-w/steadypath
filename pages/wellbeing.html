@@ -1,56 +1,54 @@
 <link rel="stylesheet" href="assets/wellbeing.css">
 <div class="page-container wellbeing-page">
-    <div style="padding: 20px; flex: 1; overflow-y: auto;">
-        <div class="wellbeing-header">
+    <div class="wellbeing-header">
+        <div>
+            <div class="section-title">Wellbeing</div>
+            <div class="section-subtitle">Track your mood and stay supported.</div>
+        </div>
+    </div>
+
+    <div class="streak-card">
+        <div class="streak-top">
+            <div class="streak-icon"><img src="assets/icons/streak.svg" alt="Streak"></div>
             <div>
-                <div class="section-title">Wellbeing</div>
-                <div class="section-subtitle">Track your mood and stay supported.</div>
+                <div class="streak-title">7 Day Streak</div>
+                <div class="streak-subtitle">Keep it going!</div>
             </div>
         </div>
-
-        <div class="streak-card">
-            <div class="streak-top">
-                <div class="streak-icon"><img src="assets/icons/streak.svg" alt="Streak"></div>
-                <div>
-                    <div class="streak-title">7 Day Streak</div>
-                    <div class="streak-subtitle">Keep it going!</div>
-                </div>
-            </div>
-            <div class="streak-days">
-                <div class="streak-day active"><span>Mon</span></div>
-                <div class="streak-day active"><span>Tue</span></div>
-                <div class="streak-day active"><span>Wed</span></div>
-                <div class="streak-day active"><span>Thu</span></div>
-                <div class="streak-day active"><span>Fri</span></div>
-                <div class="streak-day active"><span>Sat</span></div>
-                <div class="streak-day active"><span>Sun</span></div>
-            </div>
+        <div class="streak-days">
+            <div class="streak-day active"><span>Mon</span></div>
+            <div class="streak-day active"><span>Tue</span></div>
+            <div class="streak-day active"><span>Wed</span></div>
+            <div class="streak-day active"><span>Thu</span></div>
+            <div class="streak-day active"><span>Fri</span></div>
+            <div class="streak-day active"><span>Sat</span></div>
+            <div class="streak-day active"><span>Sun</span></div>
         </div>
+    </div>
 
-        <div class="checkin-card">
-            <div class="section-title">Today's Check-In</div>
-            <div class="section-subtitle">How are you feeling about your career journey today?</div>
-            <div class="mood-grid">
-                <button class="mood-button">Great</button>
-                <button class="mood-button">Okay</button>
-                <button class="mood-button">Tired</button>
-                <button class="mood-button">Stressed</button>
-            </div>
-            <button class="primary-button">Complete Check-In</button>
+    <div class="checkin-card">
+        <div class="section-title">Today's Check-In</div>
+        <div class="section-subtitle">How are you feeling about your career journey today?</div>
+        <div class="mood-grid">
+            <button class="mood-button">Great</button>
+            <button class="mood-button">Okay</button>
+            <button class="mood-button">Tired</button>
+            <button class="mood-button">Stressed</button>
         </div>
+        <button class="primary-button">Complete Check-In</button>
+    </div>
 
-        <div class="support-card">
-            <div class="support-card-header">
-                <div>
-                    <div class="section-title">Support Chat</div>
-                    <div class="section-subtitle">Ask for help whenever you need it.</div>
-                </div>
-                <div class="support-icon"><img src="assets/icons/support.svg" alt="Support chat"></div>
+    <div class="support-card">
+        <div class="support-card-header">
+            <div>
+                <div class="section-title">Support Chat</div>
+                <div class="section-subtitle">Ask for help whenever you need it.</div>
             </div>
-            <div class="support-card-body">
-                <p>Open the wellbeing assistant for coaching, motivation, and quick support.</p>
-                <button class="support-action" onclick="navigateTo('chat')">Open chat</button>
-            </div>
+            <div class="support-icon"><img src="assets/icons/support.svg" alt="Support chat"></div>
+        </div>
+        <div class="support-card-body">
+            <p>Open the wellbeing assistant for coaching, motivation, and quick support.</p>
+            <button class="support-action" onclick="navigateTo('chat')">Open chat</button>
         </div>
     </div>
 </div>

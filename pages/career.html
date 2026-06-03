@@ -4,7 +4,6 @@
         <div class="career-header">
             <div>
                 <div class="section-title">Career Path</div>
-                <div class="section-subtitle">Upload your resume and unlock a personalized learning plan.</div>
             </div>
         </div>
 
@@ -12,12 +11,18 @@
             <div class="upload-card-top">
                 <div>
                     <div class="upload-title">Upload Your Resume</div>
-                    <div class="upload-text">Get personalized skill recommendations based on your current experience.
+                    <div class="upload-text">Get personalized skill recommendations for your industry and experience.
                     </div>
                 </div>
             </div>
             <div class="upload-zone" id="resume-drop-zone">
-                <span style="font-size: 32px; margin-bottom: 8px;">📁</span>
+                <div class="upload-zone-icon-container">
+                    <svg class="upload-zone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
                 <div class="upload-zone-text">Drag & drop your resume here</div>
                 <button class="secondary-button" id="upload-resume-button">Upload Resume</button>
                 <input type="file" id="resume-upload" accept=".pdf,.png,.jpg,.jpeg,.txt,.md" hidden>
@@ -31,55 +36,62 @@
                 <div class="resume-badge">Ready</div>
             </div>
             <div class="resume-summary-body">
-                <div class="resume-summary-item"><strong>Top skills:</strong> <span id="resume-skills"></span></div>
-                <div class="resume-summary-item"><strong>Focus area:</strong> <span id="resume-focus"></span></div>
-                <div class="resume-summary-item"><strong>Next step:</strong> <span id="resume-action"></span></div>
+                <div class="resume-summary-item">
+                    <div class="item-icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <div><strong>Industry:</strong> <span id="resume-industry">—</span></div>
+                </div>
+                <div class="resume-summary-item">
+                    <div class="item-icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    </div>
+                    <div><strong>Recommended Role:</strong> <span id="resume-job-title">—</span></div>
+                </div>
+                <div class="resume-summary-item">
+                    <div class="item-icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <div><strong>Top skills:</strong> <span id="resume-skills"></span></div>
+                </div>
+                <div class="resume-summary-item">
+                    <div class="item-icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                    </div>
+                    <div><strong>Focus area:</strong> <span id="resume-focus"></span></div>
+                </div>
+                <div class="resume-summary-item">
+                    <div class="item-icon-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                    </div>
+                    <div><strong>Next step:</strong> <span id="resume-action"></span></div>
+                </div>
             </div>
         </div>
 
         <div class="section-title">Skill Progress</div>
         <div class="skill-progress-list">
-            <div class="skill-progress-row">
-                <span>React</span>
-                <span>70% → 90%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: 70%;"></div>
-            </div>
-            <div class="skill-progress-row">
-                <span>TypeScript</span>
-                <span>60% → 85%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: 60%;"></div>
-            </div>
-            <div class="skill-progress-row">
-                <span>UI/UX Design</span>
-                <span>45% → 75%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: 45%;"></div>
-            </div>
+            <p class="skill-progress-placeholder" style="font-size: 13px; color: #94a3b8; text-align: center;">Upload a resume to see your skill progress.</p>
         </div>
 
         <div class="section-title">Recommended Courses</div>
         <div class="course-card">
             <div class="course-card-header">
                 <div>
-                    <div class="course-title">Advanced React Patterns</div>
-                    <div class="course-subtitle">Frontend Masters • 4 weeks</div>
+                    <div class="course-title">Upload a resume to see courses</div>
+                    <div class="course-subtitle">Personalized to your industry</div>
                 </div>
-                <span class="course-badge">95% match</span>
+                <span class="course-badge">—</span>
             </div>
             <button class="primary-button">Start Learning</button>
         </div>
         <div class="course-card">
             <div class="course-card-header">
                 <div>
-                    <div class="course-title">TypeScript Deep Dive</div>
-                    <div class="course-subtitle">Codecademy • 3 weeks</div>
+                    <div class="course-title">Industry-specific training</div>
+                    <div class="course-subtitle">Matched to your top skills</div>
                 </div>
-                <span class="course-badge">88% match</span>
+                <span class="course-badge">—</span>
             </div>
             <button class="primary-button">Start Learning</button>
         </div>

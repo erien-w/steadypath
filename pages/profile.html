@@ -1,75 +1,91 @@
 <link rel="stylesheet" href="assets/profile.css">
 <div class="page-container profile-page">
     <div class="profile-header">
-        <button class="icon-button back-button" onclick="navigateTo('dashboard')">
-            <span style="font-size: 18px;">←</span>
+        <button class="profile-nav-button back-button" onclick="navigateTo('dashboard')" aria-label="Back">
+            <img src="assets/icons/back.svg" alt="">
         </button>
         <div class="profile-title">Profile</div>
-        <button class="icon-button edit-button" onclick="navigateTo('edit-profile')">
-            <span style="font-size: 18px;">✏️</span>
+        <button class="profile-nav-button edit-button" onclick="navigateTo('edit-profile')" aria-label="Edit profile">
+            <img src="assets/icons/edit.svg" alt="">
         </button>
     </div>
 
-    <div class="profile-main-card">
-        <div class="profile-avatar-large" style="display: flex; align-items: center; justify-content: center; background: #eee; font-size: 48px;">👤</div>
-        <div class="profile-name">y</div>
-        <div class="profile-role-badge">Aspiring Frontend Developer</div>
-    </div>
+    <div class="profile-content">
+        <div class="profile-main-card">
+            <div class="profile-avatar-large">
+                <img src="assets/icons/user.svg" alt="Profile photo" class="profile-avatar-placeholder">
+            </div>
+            <div class="profile-name">y</div>
+            <div class="profile-role-badge">Aspiring Frontend Developer</div>
+        </div>
 
-    <div class="profile-info-card">
-        <div class="profile-info-row">
-            <span>Username</span>
-            <strong>y</strong>
-        </div>
-        <div class="profile-info-row">
-            <span>Email</span>
-            <strong>alex.johnson@email.com</strong>
-        </div>
-        <div class="profile-info-row">
-            <span>Location</span>
-            <strong>San Francisco, CA</strong>
-        </div>
-        <div class="profile-info-row">
-            <span>Joined</span>
-            <strong>January 2026</strong>
-        </div>
-    </div>
-
-    <div class="section-title">Your Stats</div>
-    <div class="profile-stats-grid">
-        <div class="stat-card small-card">
-            <div class="stat-icon">7d</div>
-            <div class="stat-body">
-                <div class="stat-value">7 days</div>
-                <div class="stat-label">Learning Streak</div>
+        <div class="profile-info-card">
+            <div class="profile-info-row">
+                <span>Username</span>
+                <strong>y</strong>
+            </div>
+            <div class="profile-info-row">
+                <span>Email</span>
+                <strong>alex.johnson@email.com</strong>
+            </div>
+            <div class="profile-info-row">
+                <span>Location</span>
+                <strong>San Francisco, CA</strong>
+            </div>
+            <div class="profile-info-row">
+                <span>Joined</span>
+                <strong>January 2026</strong>
             </div>
         </div>
-        <div class="stat-card small-card">
-            <div class="stat-icon">12</div>
-            <div class="stat-body">
-                <div class="stat-value">12</div>
-                <div class="stat-label">Courses Done</div>
+
+        <div class="profile-section">
+            <div class="section-title">Your Stats</div>
+            <div class="profile-stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <img src="assets/icons/flame.svg" alt="">
+                    </div>
+                    <div class="stat-body">
+                        <div class="stat-value">7 days</div>
+                        <div class="stat-label">Learning Streak</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <img src="assets/icons/courses.svg" alt="">
+                    </div>
+                    <div class="stat-body">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Courses Done</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <img src="assets/icons/community.svg" alt="">
+                    </div>
+                    <div class="stat-body">
+                        <div class="stat-value">45</div>
+                        <div class="stat-label">Connections</div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="stat-card small-card">
-            <div class="stat-icon">45</div>
-            <div class="stat-body">
-                <div class="stat-value">45</div>
-                <div class="stat-label">Connections</div>
+
+        <div class="profile-section">
+            <div class="section-title">Achievements</div>
+            <div class="achievement-card">
+                <div class="achievement-avatar">
+                    <img src="assets/icons/flame.svg" alt="Week Warrior">
+                </div>
+                <div class="achievement-body">
+                    <div class="achievement-title">Week Warrior</div>
+                    <div class="achievement-subtitle">7-day check-in streak</div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="section-title">Achievements</div>
-    <div class="achievement-card">
-        <div class="achievement-avatar">🔥</div>
-        <div>
-            <div class="achievement-title">Week Warrior</div>
-            <div class="achievement-subtitle">7-day check-in streak</div>
+        <div class="profile-actions">
+            <button class="primary-button logout-button" id="logout-button">Logout</button>
         </div>
-    </div>
-
-    <div style="margin: 20px;">
-        <button class="primary-button" id="logout-button" style="background: #ff4d4d;">Logout</button>
     </div>
 </div>

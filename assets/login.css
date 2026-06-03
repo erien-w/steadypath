@@ -83,13 +83,22 @@
     opacity: 1;
 }
 
-#toggle-password::before {
-    content: '👁️';
-    font-size: 16px;
+#toggle-password img {
+    width: 18px;
+    height: 18px;
+    opacity: 0.6;
 }
 
-#toggle-password.visible::before {
-    content: '🙈';
+#toggle-password .icon-eye-off {
+    display: none;
+}
+
+#toggle-password.visible .icon-eye {
+    display: none;
+}
+
+#toggle-password.visible .icon-eye-off {
+    display: block;
 }
 
 .login-foot {

@@ -1,8 +1,18 @@
+.career-page {
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
 .career-content {
     padding: 22px 20px 24px;
     display: flex;
     flex-direction: column;
     gap: 18px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .career-header {
@@ -27,6 +37,8 @@
     border: 1px solid #e8edf9;
     border-radius: 24px;
     box-shadow: 0 14px 32px rgba(99, 120, 161, 0.08);
+    min-width: 0;
+    width: 100%;
 }
 
 .upload-card {
@@ -59,21 +71,39 @@
     flex-direction: column;
     align-items: center;
     gap: 14px;
-    padding: 24px 18px;
+    padding: 32px 18px;
     text-align: center;
-    border-style: dashed;
-    border-width: 1px;
-    border-color: #cbd5e1;
+    border: 2px dashed #cbd5e1;
     background: #f8fafc;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+}
+
+.upload-zone.dragover {
+    border-color: #3443d1;
+    background: #eef2ff;
+}
+
+.upload-zone-icon-container {
+    width: 64px;
+    height: 64px;
+    background: #eef2ff;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    color: #3443d1;
 }
 
 .upload-zone-icon {
-    width: 44px;
-    height: 44px;
+    width: 32px;
+    height: 32px;
 }
 
 .upload-zone-text {
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 500;
     color: #475569;
 }
 
@@ -82,41 +112,114 @@
     color: #3443d1;
     border: none;
     border-radius: 16px;
-    padding: 12px 18px;
+    padding: 12px 24px;
     cursor: pointer;
     font-weight: 700;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+    background: #e0e7ff;
+    transform: translateY(-1px);
 }
 
 .resume-result-card {
-    padding: 18px;
-    gap: 12px;
+    padding: 24px;
+    gap: 20px;
     display: flex;
     flex-direction: column;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.resume-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .resume-summary-title {
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 800;
     color: #0f172a;
+    letter-spacing: -0.01em;
 }
 
 .resume-badge {
-    padding: 8px 12px;
-    color: #2563eb;
-    background: #eff6ff;
+    padding: 6px 14px;
+    color: #059669;
+    background: #ecfdf5;
     font-size: 12px;
+    font-weight: 700;
     border-radius: 999px;
+    border: 1px solid #d1fae5;
+}
+
+.resume-summary-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .resume-summary-item {
-    font-size: 13px;
-    color: #475569;
-    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.5;
+}
+
+.item-icon-wrapper {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+}
+
+.item-icon-wrapper svg {
+    width: 20px;
+    height: 20px;
+}
+
+.resume-summary-item strong {
+    color: #0f172a;
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
 }
 
 .skill-progress-list {
     display: grid;
     gap: 16px;
+    width: 100%;
+    min-width: 0;
+}
+
+.skill-progress-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+    min-width: 0;
+}
+
+.skill-progress-row span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.skill-progress-row span:last-child {
+    flex-shrink: 0;
 }
 
 .progress-bar {
@@ -129,7 +232,7 @@
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: linear-gradient(90deg, #cc0000, #ff4d4d);
     border-radius: 3px;
 }
 

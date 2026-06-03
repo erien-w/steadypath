@@ -40,7 +40,7 @@ responses:
   - text: "Resume received! I'm analyzing the skills and career highlight areas now."
 
   utter_recommend_courses:
-  - text: "I recommend building stronger React and TypeScript skills, then applying them to a hands-on UI/UX project."
+  - text: "I can recommend courses tailored to your industry once you upload a resume on the Career Path page."
 
   utter_mood_ack:
   - text: "Thanks for checking in. I’ve logged your mood and I’m here to support your next step."

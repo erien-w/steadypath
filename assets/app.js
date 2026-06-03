@@ -1,9 +1,39 @@
 // NAVIGATION SYSTEM
-function navigateTo(pageId) {
-    // Hide current page
-    const currentPage = document.querySelector('.page-container');
-    if (currentPage) {
-        currentPage.style.display = 'none';
+const VALID_PAGES = new Set([
+    'dashboard', 'career', 'wellbeing', 'community',
+    'profile', 'edit-profile', 'chat', 'login', 'terms'
+]);
+
+function getPageFromUrl() {
+    const hash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+    return VALID_PAGES.has(hash) ? hash : null;
+}
+
+function setUrlForPage(pageId) {
+    const url = `${window.location.pathname}${window.location.search}#/${pageId}`;
+    history.pushState({ pageId }, '', url);
+}
+
+function replaceUrlForPage(pageId) {
+    const url = `${window.location.pathname}${window.location.search}#/${pageId}`;
+    history.replaceState({ pageId }, '', url);
+}
+
+function navigateTo(pageId, { replace = false, fromHistory = false } = {}) {
+    if (!VALID_PAGES.has(pageId)) {
+        pageId = isLoggedIn() ? 'dashboard' : 'login';
+    }
+
+    if (pageId === 'profile' && !isLoggedIn()) {
+        pageId = 'login';
+    }
+
+    if (!fromHistory) {
+        if (replace) {
+            replaceUrlForPage(pageId);
+        } else {
+            setUrlForPage(pageId);
+        }
     }
 
     // Update nav highlighting
@@ -13,14 +43,33 @@ function navigateTo(pageId) {
         navBtn.classList.add('active');
     }
 
-    // If profile requires login, redirect to login page
-    if (pageId === 'profile' && !isLoggedIn()) {
-        showLogin();
-        return;
-    }
-
-    // Load page
     loadPage(pageId);
+}
+
+const PAGE_STYLES = {
+    dashboard: 'assets/dashboard.css',
+    career: 'assets/career.css',
+    wellbeing: 'assets/wellbeing.css',
+    community: 'assets/community.css',
+    profile: 'assets/profile.css',
+    'edit-profile': 'assets/profile.css',
+    chat: 'assets/chat.css',
+    login: 'assets/login.css',
+    terms: 'assets/terms.css'
+};
+
+function loadPageStylesheet(pageId) {
+    const href = PAGE_STYLES[pageId];
+    const linkId = 'page-stylesheet';
+    const existing = document.getElementById(linkId);
+    if (existing) existing.remove();
+    if (!href) return;
+
+    const link = document.createElement('link');
+    link.id = linkId;
+    link.rel = 'stylesheet';
+    link.href = href;
+    document.head.appendChild(link);
 }
 
 function loadPage(pageId) {
@@ -29,7 +78,10 @@ function loadPage(pageId) {
     fetch(`pages/${pageId}.html`)
         .then(response => response.text())
         .then(html => {
-            contentArea.innerHTML = html;
+            // Strip stylesheet links — they don't load via innerHTML
+            const cleanedHtml = html.replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '');
+            contentArea.innerHTML = cleanedHtml;
+            loadPageStylesheet(pageId);
 
             // Initialize page-specific functionality
             initializePageFunctionality(pageId);
@@ -142,6 +194,13 @@ function initializeLogin() {
     }
 }
 
+function setAvatarPhoto(avatarEl, photoUrl) {
+    if (!avatarEl) return;
+    avatarEl.style.backgroundImage = `url(${photoUrl})`;
+    avatarEl.style.backgroundSize = 'cover';
+    avatarEl.querySelectorAll('img, svg').forEach(el => el.remove());
+}
+
 function initializeProfile() {
     const userJson = localStorage.getItem('steadypath_user');
     let nameEl = document.querySelector('.profile-name');
@@ -157,21 +216,17 @@ function initializeProfile() {
         
         // Update avatar if photo exists
         if (avatarEl && user.photo) {
-            avatarEl.style.backgroundImage = `url(${user.photo})`;
-            avatarEl.style.backgroundSize = 'cover';
-            avatarEl.textContent = '';
+            setAvatarPhoto(avatarEl, user.photo);
         }
 
-        // populate email if element exists
-        const emailEl = document.querySelector('.profile-info-row strong');
-        if (emailEl && user.email) emailEl.textContent = user.email;
-
-        // populate location if element exists
-        const locationRows = document.querySelectorAll('.profile-info-row');
-        locationRows.forEach(row => {
-            if (row.querySelector('span')?.textContent === 'Location') {
-                row.querySelector('strong').textContent = user.location || 'Not set';
-            }
+        // populate profile info rows
+        document.querySelectorAll('.profile-info-row').forEach(row => {
+            const label = row.querySelector('span')?.textContent?.trim();
+            const valueEl = row.querySelector('strong');
+            if (!valueEl) return;
+            if (label === 'Username') valueEl.textContent = user.name || 'User';
+            if (label === 'Email') valueEl.textContent = user.email || 'Not set';
+            if (label === 'Location') valueEl.textContent = user.location || 'Not set';
         });
     } catch (e) {
         console.error('profile init error', e);
@@ -194,7 +249,7 @@ function initializeEditProfile() {
     const emailInput = document.getElementById('edit-email');
     const locationInput = document.getElementById('edit-location');
     const saveBtn = document.getElementById('save-profile');
-    const photoBtn = document.querySelector('.profile-main-card .secondary-button');
+    const photoBtn = document.querySelector('.profile-main-card .change-photo-button');
     const avatarEl = document.querySelector('.profile-main-card .profile-avatar-large');
 
     let currentUser = {};
@@ -205,9 +260,7 @@ function initializeEditProfile() {
             if (emailInput) emailInput.value = currentUser.email || '';
             if (locationInput) locationInput.value = currentUser.location || '';
             if (avatarEl && currentUser.photo) {
-                avatarEl.style.backgroundImage = `url(${currentUser.photo})`;
-                avatarEl.style.backgroundSize = 'cover';
-                avatarEl.textContent = '';
+                setAvatarPhoto(avatarEl, currentUser.photo);
             }
         } catch (e) {
             console.error('edit profile init error', e);
@@ -229,9 +282,7 @@ function initializeEditProfile() {
                     const base64 = event.target.result;
                     currentUser.photo = base64;
                     if (avatarEl) {
-                        avatarEl.style.backgroundImage = `url(${base64})`;
-                        avatarEl.style.backgroundSize = 'cover';
-                        avatarEl.textContent = '';
+                        setAvatarPhoto(avatarEl, base64);
                     }
                 };
                 reader.readAsDataURL(file);
@@ -263,7 +314,7 @@ function initializeEditProfile() {
 
 // LOGIN HANDLING
 function showLogin() {
-    loadPage('login');
+    navigateTo('login', { replace: true });
 }
 
 function isLoggedIn() {
@@ -287,6 +338,13 @@ const RASA_URL = window.location.hostname === 'localhost' || window.location.hos
 
 const SENDER_ID = 'user_' + Math.random().toString(36).substr(2, 9);
 
+function createBotAvatar() {
+    const avatar = document.createElement('div');
+    avatar.className = 'message-avatar';
+    avatar.innerHTML = '<img src="assets/icons/bot.svg" alt="Assistant">';
+    return avatar;
+}
+
 function addChatMessage(text, isUser) {
     const chatMessages = document.getElementById('chat-messages');
     if (!chatMessages) return;
@@ -295,10 +353,7 @@ function addChatMessage(text, isUser) {
     messageGroup.className = `message-group ${isUser ? 'user' : 'bot'}`;
 
     if (!isUser) {
-        const avatar = document.createElement('div');
-        avatar.className = 'message-avatar';
-        avatar.textContent = '🤖';
-        messageGroup.appendChild(avatar);
+        messageGroup.appendChild(createBotAvatar());
     }
 
     const contentDiv = document.createElement('div');
@@ -318,10 +373,7 @@ function showChatTyping() {
     messageGroup.className = 'message-group bot';
     messageGroup.id = 'typing-indicator';
 
-    const avatar = document.createElement('div');
-    avatar.className = 'message-avatar';
-    avatar.textContent = '🤖';
-    messageGroup.appendChild(avatar);
+    messageGroup.appendChild(createBotAvatar());
 
     const typingDiv = document.createElement('div');
     typingDiv.className = 'typing-indicator';
@@ -371,7 +423,7 @@ async function sendToRasa(message, metadata = null) {
     } catch (error) {
         console.error('Error:', error);
         hideTyping();
-        addChatMessage(`⚠️ Connection Failed: I can't reach the Rasa server at ${RASA_URL}`, false);
+        addChatMessage(`Connection Failed: I can't reach the Rasa server at ${RASA_URL}`, false);
         
         if (RASA_URL.includes('localhost')) {
             addChatMessage("This usually means your local Rasa server isn't running. Please run:", false);
@@ -386,7 +438,7 @@ async function sendToRasa(message, metadata = null) {
             const btn = document.createElement('button');
             btn.className = 'primary-button';
             btn.style.marginTop = '10px';
-            btn.textContent = '🔄 Retry Connection';
+            btn.innerHTML = '<img src="assets/icons/refresh.svg" alt="" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;">Retry Connection';
             btn.onclick = () => window.location.reload();
             chatMessages.appendChild(btn);
         }
@@ -464,9 +516,7 @@ function initializeDashboard() {
     if (avatarEl && userJson) {
         const user = JSON.parse(userJson);
         if (user.photo) {
-            avatarEl.style.backgroundImage = `url(${user.photo})`;
-            avatarEl.style.backgroundSize = 'cover';
-            avatarEl.textContent = '';
+            setAvatarPhoto(avatarEl, user.photo);
         }
     }
 
@@ -499,39 +549,10 @@ function initializeCareer() {
         if (uploadError) uploadError.textContent = message;
     };
 
-    const parseResumeText = (text) => {
-        const skillList = [
-            { name: 'React', level: 0 },
-            { name: 'TypeScript', level: 0 },
-            { name: 'UI/UX', level: 0 },
-            { name: 'JavaScript', level: 0 },
-            { name: 'Python', level: 0 },
-            { name: 'Node', level: 0 },
-            { name: 'HTML', level: 0 },
-            { name: 'CSS', level: 0 },
-            { name: 'Figma', level: 0 },
-            { name: 'SQL', level: 0 }
-        ];
+    const parseResumeText = (text) => ResumeAnalyzer.analyze(text);
 
-        skillList.forEach(skill => {
-            const regex = new RegExp(`\\b${skill.name}\\b`, 'i');
-            if (regex.test(text)) {
-                // Randomize a realistic progress based on detection
-                skill.level = Math.floor(Math.random() * 30) + 50; 
-            }
-        });
-
-        const foundSkills = skillList.filter(s => s.level > 0);
-        const topSkillsStr = foundSkills.length ? foundSkills.slice(0, 4).map(s => s.name).join(', ') : 'No clear skills found yet';
-        const focus = foundSkills.some(s => s.name === 'React') ? 'Frontend engineering with React' : foundSkills.some(s => s.name === 'UI/UX') ? 'Product design and user experience' : 'building your strongest technical skills';
-        const suggestion = foundSkills.some(s => s.name === 'TypeScript') ? 'Practice a TypeScript portfolio project' : 'Add more real project experience to your resume';
-        
-        return { skills: topSkillsStr, focus, suggestion, skillData: foundSkills };
-    };
-
-    const updateSkillProgressUI = (skillData) => {
+    const updateSkillProgressUI = (skillData, courses) => {
         const progressList = document.querySelector('.skill-progress-list');
-        const courseSection = document.querySelector('.career-content');
         if (!progressList) return;
 
         if (skillData.length === 0) {
@@ -545,40 +566,38 @@ function initializeCareer() {
             const row = document.createElement('div');
             row.className = 'skill-progress-row';
             row.innerHTML = `<span>${skill.name}</span><span>${skill.level}% → ${target}%</span>`;
-            
+
             const bar = document.createElement('div');
             bar.className = 'progress-bar';
             bar.innerHTML = `<div class="progress-fill" style="width: ${skill.level}%;"></div>`;
-            
+
             progressList.appendChild(row);
             progressList.appendChild(bar);
         });
 
-        // Update courses based on top skill
-        const topSkill = skillData[0].name;
-        const courses = [
-            { title: `Advanced ${topSkill} Patterns`, provider: 'Frontend Masters', match: '98%' },
-            { title: `${topSkill} for Professionals`, provider: 'Coursera', match: '92%' }
-        ];
-
+        const courseList = courses || [];
         const existingCourses = document.querySelectorAll('.course-card');
         existingCourses.forEach((card, index) => {
-            if (courses[index]) {
-                card.querySelector('.course-title').textContent = courses[index].title;
-                card.querySelector('.course-subtitle').textContent = `${courses[index].provider} • 4 weeks`;
-                card.querySelector('.course-badge').textContent = `${courses[index].match} match`;
+            if (courseList[index]) {
+                card.querySelector('.course-title').textContent = courseList[index].title;
+                card.querySelector('.course-subtitle').textContent = `${courseList[index].provider} • ${courseList[index].weeks} weeks`;
+                card.querySelector('.course-badge').textContent = `${courseList[index].match} match`;
             }
         });
     };
 
     const showResumeSummary = (data) => {
         if (resumeSummary) resumeSummary.hidden = false;
+        const jobTitleOutput = document.getElementById('resume-job-title');
+        const industryOutput = document.getElementById('resume-industry');
+        if (jobTitleOutput) jobTitleOutput.textContent = data.jobTitle || 'Entry-level Professional';
+        if (industryOutput) industryOutput.textContent = data.industryLabel || 'General';
         if (skillsOutput) skillsOutput.textContent = data.skills;
         if (focusOutput) focusOutput.textContent = data.focus;
         if (actionOutput) actionOutput.textContent = data.suggestion;
-        
+
         if (data.skillData) {
-            updateSkillProgressUI(data.skillData);
+            updateSkillProgressUI(data.skillData, data.courses);
             localStorage.setItem('steadypath_career_data', JSON.stringify(data));
         }
     };
@@ -589,6 +608,9 @@ function initializeCareer() {
         try {
             const data = JSON.parse(savedData);
             showResumeSummary(data);
+            if (data.skillData) {
+                updateSkillProgressUI(data.skillData, data.courses);
+            }
         } catch (e) {
             console.error('Error loading saved career data', e);
         }
@@ -645,11 +667,16 @@ function initializeCareer() {
             showResumeSummary(analysis);
             clearError();
 
-            addChatMessage(`I've scanned your ${file.name.split('.').pop().toUpperCase()} resume.`, false);
+            addChatMessage(`I've scanned your ${file.name.split('.').pop().toUpperCase()} resume (${analysis.industryLabel}).`, false);
             sendToRasa('I uploaded my resume for review.', {
                 resume_text: text,
                 filename: file.name,
-                extracted_skills: analysis.skills
+                extracted_skills: analysis.skills,
+                industry: analysis.industry,
+                industry_label: analysis.industryLabel,
+                job_title: analysis.jobTitle,
+                focus_area: analysis.focus,
+                next_step: analysis.suggestion
             });
         } catch (err) {
             console.error('Extraction error:', err);
@@ -783,11 +810,21 @@ function initializeCommunity() {
 }
 
 // Initialize on page load
+window.addEventListener('popstate', (event) => {
+    const pageId = event.state?.pageId || getPageFromUrl() || (isLoggedIn() ? 'dashboard' : 'login');
+    navigateTo(pageId, { fromHistory: true });
+});
+
 document.addEventListener('DOMContentLoaded', () => {
-    // If user is not logged in, show login; otherwise load dashboard
+    const urlPage = getPageFromUrl();
+    let pageId;
+
     if (!isLoggedIn()) {
-        loadPage('login');
+        pageId = (urlPage === 'terms' || urlPage === 'login') ? urlPage : 'login';
     } else {
-        loadPage('dashboard');
+        pageId = urlPage || 'dashboard';
     }
+
+    // replace: true avoids an extra history entry on first load
+    navigateTo(pageId, { replace: true, fromHistory: Boolean(urlPage) });
 });

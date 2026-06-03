@@ -4,7 +4,7 @@
 <head>
     <title>SteadyPath</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="icon" type="image/svg+xml" href="assets/images/steadypath-logo.svg">
     <link rel="stylesheet" href="assets/styles.css">
     <!-- External Libraries for PDF and Image Scanning -->
@@ -27,7 +27,10 @@
                 </div>
                 <div class="header-right">
                     <button onclick="navigateTo('profile')" class="icon-button">
-                        <span style="font-size: 20px;">👤</span>
+                        <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -59,6 +62,7 @@
         </div>
     </div>
 
+    <script src="assets/resume-analyzer.js"></script>
     <script src="assets/app.js"></script>
 </body>
 

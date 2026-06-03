@@ -1,8 +1,19 @@
+.wellbeing-page {
+    padding: 22px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
 .wellbeing-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 0;
+    min-width: 0;
 }
 
 .wellbeing-avatar {
@@ -19,7 +30,8 @@
     border: 1px solid #e5e7eb;
     border-radius: 20px;
     padding: 18px;
-    margin-bottom: 16px;
+    margin-bottom: 0;
+    min-width: 0;
 }
 
 .streak-card {
@@ -30,6 +42,7 @@
     display: flex;
     align-items: center;
     gap: 14px;
+    min-width: 0;
 }
 
 .streak-icon {
@@ -40,6 +53,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .streak-title {
@@ -54,22 +68,24 @@
 }
 
 .streak-days {
-    display: flex;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
     margin-top: 16px;
+    width: 100%;
 }
 
 .streak-day {
-    flex: 1;
-    min-height: 48px;
-    border-radius: 16px;
+    min-width: 0;
+    min-height: 44px;
+    border-radius: 12px;
     background: #ffffff;
     border: 1px solid #e5e7eb;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #333;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
 }
 
@@ -80,9 +96,10 @@
 
 .mood-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     margin: 18px 0;
+    width: 100%;
 }
 
 .mood-button,
@@ -101,6 +118,7 @@
     color: #111;
     transition: all 0.2s ease;
     border: 2px solid transparent;
+    min-width: 0;
 }
 
 .mood-button:hover {
@@ -132,6 +150,7 @@
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 14px;
+    min-width: 0;
 }
 
 .support-icon {
@@ -142,9 +161,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .support-icon img {
     width: 22px;
     height: 22px;
+}
+
+@media (max-width: 420px) {
+    .wellbeing-page {
+        padding: 16px 14px 24px;
+    }
+
+    .streak-days {
+        gap: 4px;
+    }
+
+    .streak-day {
+        min-height: 36px;
+        font-size: 10px;
+        border-radius: 10px;
+    }
 }
