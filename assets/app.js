@@ -361,7 +361,22 @@ async function sendToRasa(message, metadata = null) {
     } catch (error) {
         console.error('Error:', error);
         hideTyping();
-        addChatMessage("I'm having trouble connecting. Make sure Rasa server is running: rasa run --enable-api", false);
+        addChatMessage("⚠️ Connection Refused: I can't reach the Rasa server at http://localhost:5005.", false);
+        addChatMessage("This usually means the server isn't running. Please follow these steps:", false);
+        addChatMessage("1️⃣ Open a terminal and run: rasa run --enable-api --cors \"*\"", false);
+        addChatMessage("2️⃣ Open another terminal and run: rasa run actions", false);
+        addChatMessage("3️⃣ Make sure you are in the project folder: /Users/macbook/my-rasa-assistant", false);
+        
+        // Add a retry button
+        const chatMessages = document.getElementById('chat-messages');
+        if (chatMessages) {
+            const btn = document.createElement('button');
+            btn.className = 'primary-button';
+            btn.style.marginTop = '10px';
+            btn.textContent = '🔄 Retry Connection';
+            btn.onclick = () => window.location.reload();
+            chatMessages.appendChild(btn);
+        }
     }
     const sendButton = document.getElementById('send-button');
     if (sendButton) sendButton.disabled = false;
