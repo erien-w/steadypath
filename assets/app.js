@@ -508,29 +508,67 @@ function initializeCareer() {
         if (actionOutput) actionOutput.textContent = data.suggestion;
     };
 
-    const handleFile = (file) => {
+    const extractTextFromPDF = async (file) => {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let fullText = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            fullText += content.items.map(item => item.str).join(' ') + '\n';
+        }
+        return fullText;
+    };
+
+    const extractTextFromImage = async (file) => {
+        const result = await Tesseract.recognize(file, 'eng');
+        return result.data.text;
+    };
+
+    const handleFile = async (file) => {
         if (!file) return;
         clearError();
 
-        if (!file.name.match(/\.(txt|md)$/i)) {
-            showError('Please upload a plain text resume file (.txt or .md).');
+        const isText = file.name.match(/\.(txt|md)$/i);
+        const isPDF = file.name.match(/\.pdf$/i);
+        const isImage = file.name.match(/\.(png|jpg|jpeg)$/i);
+
+        if (!isText && !isPDF && !isImage) {
+            showError('Please upload a resume in PDF, Image, or Text format.');
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = () => {
-            const text = reader.result.toString();
+        showError('Scanning document... please wait.'); // Use error area as status
+        
+        try {
+            let text = '';
+            if (isText) {
+                text = await file.text();
+            } else if (isPDF) {
+                text = await extractTextFromPDF(file);
+            } else if (isImage) {
+                text = await extractTextFromImage(file);
+            }
+
+            if (!text.trim()) {
+                showError('Could not extract text from this file. Please try a different format.');
+                return;
+            }
+
             const analysis = parseResumeText(text);
             showResumeSummary(analysis);
-            addChatMessage('I uploaded my resume for analysis.', true);
+            clearError();
+
+            addChatMessage(`I've scanned your ${file.name.split('.').pop().toUpperCase()} resume.`, false);
             sendToRasa('I uploaded my resume for review.', {
                 resume_text: text,
                 filename: file.name,
                 extracted_skills: analysis.skills
             });
-        };
-        reader.onerror = () => showError('Unable to read the file. Please try a text resume.');
-        reader.readAsText(file);
+        } catch (err) {
+            console.error('Extraction error:', err);
+            showError('Error scanning file. Make sure it is not corrupted.');
+        }
     };
 
     uploadZone.addEventListener('dragover', (event) => {
