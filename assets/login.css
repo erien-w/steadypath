@@ -1,8 +1,10 @@
 .login-page {
-    padding: 22px 20px 32px;
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    min-height: 100%;
 }
 
 .login-card {

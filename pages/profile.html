@@ -2,21 +2,25 @@
 <div class="page-container profile-page">
     <div class="profile-header">
         <button class="icon-button back-button" onclick="navigateTo('dashboard')">
-            <img src="assets/images/icon-back.png" alt="Back">
+            <span style="font-size: 18px;">←</span>
         </button>
         <div class="profile-title">Profile</div>
-        <button class="icon-button edit-button">
-            <img src="assets/images/icon-edit.png" alt="Edit">
+        <button class="icon-button edit-button" onclick="navigateTo('edit-profile')">
+            <span style="font-size: 18px;">✏️</span>
         </button>
     </div>
 
     <div class="profile-main-card">
-        <img class="profile-avatar-large" src="assets/images/profile-avatar.png" alt="Profile avatar">
+        <div class="profile-avatar-large" style="display: flex; align-items: center; justify-content: center; background: #eee; font-size: 48px;">👤</div>
         <div class="profile-name">y</div>
         <div class="profile-role-badge">Aspiring Frontend Developer</div>
     </div>
 
     <div class="profile-info-card">
+        <div class="profile-info-row">
+            <span>Username</span>
+            <strong>y</strong>
+        </div>
         <div class="profile-info-row">
             <span>Email</span>
             <strong>alex.johnson@email.com</strong>
@@ -63,5 +67,9 @@
             <div class="achievement-title">Week Warrior</div>
             <div class="achievement-subtitle">7-day check-in streak</div>
         </div>
+    </div>
+
+    <div style="margin: 20px;">
+        <button class="primary-button" id="logout-button" style="background: #ff4d4d;">Logout</button>
     </div>
 </div>
