@@ -99,13 +99,31 @@
 .mood-button {
     background: #f8f9fb;
     color: #111;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.mood-button:hover {
+    background: #fff5f5;
+    border-color: #ffcccc;
+}
+
+.mood-button.active {
+    background: #cc0000;
+    color: white;
+    box-shadow: 0 4px 12px rgba(204, 0, 0, 0.2);
 }
 
 .primary-button {
     width: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #cc0000 0%, #880000 100%);
     color: white;
     margin-top: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-button:active {
+    transform: scale(0.98);
 }
 
 .support-card-header {

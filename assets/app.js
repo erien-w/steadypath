@@ -495,13 +495,75 @@ function initializeCareer() {
     };
 
     const parseResumeText = (text) => {
-        const keywords = ['React', 'TypeScript', 'UI/UX', 'JavaScript', 'Python', 'Node', 'HTML', 'CSS', 'Figma', 'Leadership', 'SQL', 'Design'];
-        const found = keywords.filter(keyword => new RegExp(`\\b${keyword}\\b`, 'i').test(text));
-        const skills = [...new Set(found)];
-        const topSkills = skills.length ? skills.slice(0, 4).join(', ') : 'No clear skills found yet';
-        const focus = skills.includes('React') ? 'Frontend engineering with React' : skills.includes('UI/UX') ? 'Product design and user experience' : 'building your strongest technical skills';
-        const suggestion = skills.includes('TypeScript') ? 'Practice a TypeScript portfolio project' : 'Add more real project experience to your resume';
-        return { skills: topSkills, focus, suggestion };
+        const skillList = [
+            { name: 'React', level: 0 },
+            { name: 'TypeScript', level: 0 },
+            { name: 'UI/UX', level: 0 },
+            { name: 'JavaScript', level: 0 },
+            { name: 'Python', level: 0 },
+            { name: 'Node', level: 0 },
+            { name: 'HTML', level: 0 },
+            { name: 'CSS', level: 0 },
+            { name: 'Figma', level: 0 },
+            { name: 'SQL', level: 0 }
+        ];
+
+        skillList.forEach(skill => {
+            const regex = new RegExp(`\\b${skill.name}\\b`, 'i');
+            if (regex.test(text)) {
+                // Randomize a realistic progress based on detection
+                skill.level = Math.floor(Math.random() * 30) + 50; 
+            }
+        });
+
+        const foundSkills = skillList.filter(s => s.level > 0);
+        const topSkillsStr = foundSkills.length ? foundSkills.slice(0, 4).map(s => s.name).join(', ') : 'No clear skills found yet';
+        const focus = foundSkills.some(s => s.name === 'React') ? 'Frontend engineering with React' : foundSkills.some(s => s.name === 'UI/UX') ? 'Product design and user experience' : 'building your strongest technical skills';
+        const suggestion = foundSkills.some(s => s.name === 'TypeScript') ? 'Practice a TypeScript portfolio project' : 'Add more real project experience to your resume';
+        
+        return { skills: topSkillsStr, focus, suggestion, skillData: foundSkills };
+    };
+
+    const updateSkillProgressUI = (skillData) => {
+        const progressList = document.querySelector('.skill-progress-list');
+        const courseSection = document.querySelector('.career-content');
+        if (!progressList) return;
+
+        if (skillData.length === 0) {
+            progressList.innerHTML = '<p style="font-size: 13px; color: #94a3b8; text-align: center;">No skills detected yet. Upload a resume to see progress.</p>';
+            return;
+        }
+
+        progressList.innerHTML = '';
+        skillData.slice(0, 3).forEach(skill => {
+            const target = Math.min(100, skill.level + 20);
+            const row = document.createElement('div');
+            row.className = 'skill-progress-row';
+            row.innerHTML = `<span>${skill.name}</span><span>${skill.level}% → ${target}%</span>`;
+            
+            const bar = document.createElement('div');
+            bar.className = 'progress-bar';
+            bar.innerHTML = `<div class="progress-fill" style="width: ${skill.level}%;"></div>`;
+            
+            progressList.appendChild(row);
+            progressList.appendChild(bar);
+        });
+
+        // Update courses based on top skill
+        const topSkill = skillData[0].name;
+        const courses = [
+            { title: `Advanced ${topSkill} Patterns`, provider: 'Frontend Masters', match: '98%' },
+            { title: `${topSkill} for Professionals`, provider: 'Coursera', match: '92%' }
+        ];
+
+        const existingCourses = document.querySelectorAll('.course-card');
+        existingCourses.forEach((card, index) => {
+            if (courses[index]) {
+                card.querySelector('.course-title').textContent = courses[index].title;
+                card.querySelector('.course-subtitle').textContent = `${courses[index].provider} • 4 weeks`;
+                card.querySelector('.course-badge').textContent = `${courses[index].match} match`;
+            }
+        });
     };
 
     const showResumeSummary = (data) => {
@@ -509,7 +571,23 @@ function initializeCareer() {
         if (skillsOutput) skillsOutput.textContent = data.skills;
         if (focusOutput) focusOutput.textContent = data.focus;
         if (actionOutput) actionOutput.textContent = data.suggestion;
+        
+        if (data.skillData) {
+            updateSkillProgressUI(data.skillData);
+            localStorage.setItem('steadypath_career_data', JSON.stringify(data));
+        }
     };
+
+    // Load persisted career data if it exists
+    const savedData = localStorage.getItem('steadypath_career_data');
+    if (savedData) {
+        try {
+            const data = JSON.parse(savedData);
+            showResumeSummary(data);
+        } catch (e) {
+            console.error('Error loading saved career data', e);
+        }
+    }
 
     const extractTextFromPDF = async (file) => {
         const arrayBuffer = await file.arrayBuffer();
@@ -593,30 +671,96 @@ function initializeCareer() {
     uploadInput.addEventListener('change', (event) => handleFile(event.target.files[0]));
 }
 
+function showToast(message, duration = 3000) {
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
 function initializeWellbeing() {
     const moodButtons = document.querySelectorAll('.mood-button');
-    const checkInButton = document.querySelector('.primary-button');
+    const checkInButton = document.querySelector('.checkin-card .primary-button');
     let selectedMood = null;
 
     if (moodButtons.length) {
         moodButtons.forEach(button => {
-            button.addEventListener('click', () => {
+            // Using both click and touchend for mobile responsiveness
+            const handleSelection = (e) => {
+                e.preventDefault();
                 moodButtons.forEach(item => item.classList.remove('active'));
                 button.classList.add('active');
-                selectedMood = button.dataset.mood || button.textContent;
-            });
+                selectedMood = button.textContent.trim();
+                console.log('Selected mood:', selectedMood);
+            };
+
+            button.addEventListener('click', handleSelection);
+            button.addEventListener('touchend', handleSelection, { passive: false });
         });
     }
 
     if (checkInButton) {
         checkInButton.addEventListener('click', () => {
             if (!selectedMood) {
-                alert('Select how you are feeling before submitting your check-in.');
+                showToast('Please select a mood first!');
                 return;
             }
+
+            if (selectedMood.toLowerCase() === 'stressed') {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.style.background = '#cc0000';
+                toast.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <span>Feeling stressed? Let's talk.</span>
+                        <button id="toast-chat-btn" style="background:white; color:#cc0000; border:none; padding:4px 10px; border-radius:8px; font-weight:700;">Open Chat</button>
+                    </div>
+                `;
+                
+                let container = document.querySelector('.toast-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.className = 'toast-container';
+                    document.body.appendChild(container);
+                }
+                container.appendChild(toast);
+
+                document.getElementById('toast-chat-btn').onclick = () => {
+                    navigateTo('chat');
+                    setTimeout(() => {
+                        addChatMessage("I'm feeling quite stressed about my career journey today.", true);
+                        showChatTyping();
+                        sendToRasa("I am feeling stressed. Can we talk?");
+                    }, 500);
+                    toast.remove();
+                };
+
+                setTimeout(() => {
+                    toast.classList.add('fade-out');
+                    setTimeout(() => toast.remove(), 300);
+                }, 5000);
+                return;
+            }
+
             addChatMessage(`I feel ${selectedMood} today.`, true);
             sendToRasa(`I feel ${selectedMood} today.`);
-            alert('Check-in recorded. Keep growing!');
+            showToast(`Check-in recorded: ${selectedMood}. Keep growing!`);
+            
+            // Visual reset
+            moodButtons.forEach(item => item.classList.remove('active'));
+            selectedMood = null;
         });
     }
 }
