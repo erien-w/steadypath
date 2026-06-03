@@ -17,9 +17,8 @@ COPY . .
 # Set permissions for the start script
 RUN chmod +x start.sh
 
-# Expose ports
+# Expose port for Rasa
 EXPOSE 8080
-EXPOSE 5055
 
 # Default environment variables
 ENV PORT=8080
