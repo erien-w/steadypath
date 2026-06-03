@@ -1,0 +1,98 @@
+.community-top {
+    padding: 22px 20px 0;
+}
+
+.community-search-row {
+    display: flex;
+    gap: 12px;
+    padding: 0 20px 16px;
+}
+
+.search-input {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 18px;
+    background: white;
+    border: 1px solid #e8edf9;
+}
+
+.search-input img {
+    width: 18px;
+    height: 18px;
+}
+
+.search-input input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 13px;
+    color: #334155;
+}
+
+.filter-button {
+    padding: 12px 16px;
+    background: #eef2ff;
+    color: #2563eb;
+    font-weight: 700;
+    border-radius: 18px;
+}
+
+.community-tabs {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 0 20px 18px;
+}
+
+.tab-pill {
+    padding: 10px 16px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 18px;
+}
+
+.tab-pill.active {
+    background: #eef2ff;
+    color: #2563eb;
+}
+
+.group-card {
+    margin: 0 20px 14px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-radius: 18px;
+}
+
+.group-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.group-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.group-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.group-tags span {
+    padding: 8px 12px;
+    background: #f8fafc;
+    color: #475569;
+    border-radius: 999px;
+    font-size: 11px;
+}

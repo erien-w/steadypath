@@ -1,0 +1,50 @@
+version: "3.1"
+
+stories:
+
+- story: happy path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+
+- story: sad path 1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: affirm
+  - action: utter_happy
+
+- story: sad path 2
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: deny
+  - action: utter_goodbye
+
+- story: support request
+  steps:
+  - intent: ask_support
+  - action: utter_support_info
+
+- story: resume upload
+  steps:
+  - intent: resume_upload
+  - action: action_resume_summary
+
+- story: career advice
+  steps:
+  - intent: ask_career_advice
+  - action: utter_recommend_courses
+
+- story: course recommendation
+  steps:
+  - intent: ask_course_recommendation
+  - action: utter_recommend_courses

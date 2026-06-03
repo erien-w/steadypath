@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SteadyPath Dev</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+    <div class="app-wrapper">
+        <div class="app-container">
+            <!-- HEADER -->
+            <div class="app-header">
+                <div class="header-left">
+                    <img class="header-logo" src="assets/images/steadypath-logo.svg" alt="SteadyPath logo">
+                    <h1 class="header-title">SteadyPath</h1>
+                </div>
+                <div class="header-right">
+                    <button onclick="navigateTo('profile')" class="icon-button">
+                        <img src="assets/images/profile-avatar.png" alt="Profile">
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTENT AREA -->
+            <div class="app-content">
+                <!-- Pages load here dynamically -->
+            </div>
+
+            <!-- NAVIGATION -->
+            <div class="app-nav">
+                <button class="nav-item active" onclick="navigateTo('dashboard')" data-page="dashboard">
+                    <img class="nav-icon" src="assets/icons/home.svg" alt="Home">
+                    <div class="nav-label">Home</div>
+                </button>
+                <button class="nav-item" onclick="navigateTo('career')" data-page="career">
+                    <img class="nav-icon" src="assets/icons/career.svg" alt="Career">
+                    <div class="nav-label">Career</div>
+                </button>
+                <button class="nav-item" onclick="navigateTo('wellbeing')" data-page="wellbeing">
+                    <img class="nav-icon" src="assets/icons/wellbeing.svg" alt="Wellbeing">
+                    <div class="nav-label">Wellbeing</div>
+                </button>
+                <button class="nav-item" onclick="navigateTo('community')" data-page="community">
+                    <img class="nav-icon" src="assets/icons/community.svg" alt="Community">
+                    <div class="nav-label">Community</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/app.js"></script>
+</body>
+
+</html>
