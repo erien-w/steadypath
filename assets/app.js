@@ -51,22 +51,34 @@ function loadPage(pageId) {
 }
 
 function initializePageFunctionality(pageId) {
-    if (pageId === 'chat') {
-        initializeChat();
-    } else if (pageId === 'dashboard') {
-        initializeDashboard();
-    } else if (pageId === 'career') {
-        initializeCareer();
-    } else if (pageId === 'wellbeing') {
-        initializeWellbeing();
-    } else if (pageId === 'profile') {
-        initializeProfile();
-    } else if (pageId === 'terms') {
-        // nothing special
-    } else if (pageId === 'community') {
-        initializeCommunity();
-    } else if (pageId === 'login') {
-        initializeLogin();
+    switch (pageId) {
+        case 'chat':
+            initializeChat();
+            break;
+        case 'dashboard':
+            initializeDashboard();
+            break;
+        case 'career':
+            initializeCareer();
+            break;
+        case 'wellbeing':
+            initializeWellbeing();
+            break;
+        case 'profile':
+            initializeProfile();
+            break;
+        case 'community':
+            initializeCommunity();
+            break;
+        case 'login':
+            initializeLogin();
+            break;
+        case 'edit-profile':
+            initializeEditProfile();
+            break;
+        case 'terms':
+            // nothing special
+            break;
     }
 }
 
@@ -115,7 +127,7 @@ function initializeLogin() {
 
     if (loginGuest) {
         loginGuest.addEventListener('click', function () {
-            const user = { name: 'Guest', email: '', guest: true };
+            const user = { name: 'Guest', email: 'guest@steadypath.app', guest: true, location: 'Everywhere' };
             localStorage.setItem('steadypath_user', JSON.stringify(user));
             setLoggedIn(true);
             navigateTo('dashboard');
@@ -133,6 +145,8 @@ function initializeLogin() {
 function initializeProfile() {
     const userJson = localStorage.getItem('steadypath_user');
     let nameEl = document.querySelector('.profile-name');
+    let avatarEl = document.querySelector('.profile-main-card .profile-avatar-large');
+    
     if (!userJson) {
         if (nameEl) nameEl.textContent = 'Guest';
         return;
@@ -140,11 +154,110 @@ function initializeProfile() {
     try {
         const user = JSON.parse(userJson);
         if (nameEl) nameEl.textContent = user.name || 'User';
+        
+        // Update avatar if photo exists
+        if (avatarEl && user.photo) {
+            avatarEl.style.backgroundImage = `url(${user.photo})`;
+            avatarEl.style.backgroundSize = 'cover';
+            avatarEl.textContent = '';
+        }
+
         // populate email if element exists
         const emailEl = document.querySelector('.profile-info-row strong');
         if (emailEl && user.email) emailEl.textContent = user.email;
+
+        // populate location if element exists
+        const locationRows = document.querySelectorAll('.profile-info-row');
+        locationRows.forEach(row => {
+            if (row.querySelector('span')?.textContent === 'Location') {
+                row.querySelector('strong').textContent = user.location || 'Not set';
+            }
+        });
     } catch (e) {
         console.error('profile init error', e);
+    }
+
+    // Logout listener
+    const logoutBtn = document.getElementById('logout-button');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('steadypath_logged_in');
+            localStorage.removeItem('steadypath_user');
+            window.location.reload();
+        });
+    }
+}
+
+function initializeEditProfile() {
+    const userJson = localStorage.getItem('steadypath_user');
+    const nameInput = document.getElementById('edit-name');
+    const emailInput = document.getElementById('edit-email');
+    const locationInput = document.getElementById('edit-location');
+    const saveBtn = document.getElementById('save-profile');
+    const photoBtn = document.querySelector('.profile-main-card .secondary-button');
+    const avatarEl = document.querySelector('.profile-main-card .profile-avatar-large');
+
+    let currentUser = {};
+    if (userJson) {
+        try {
+            currentUser = JSON.parse(userJson);
+            if (nameInput) nameInput.value = currentUser.name || '';
+            if (emailInput) emailInput.value = currentUser.email || '';
+            if (locationInput) locationInput.value = currentUser.location || '';
+            if (avatarEl && currentUser.photo) {
+                avatarEl.style.backgroundImage = `url(${currentUser.photo})`;
+                avatarEl.style.backgroundSize = 'cover';
+                avatarEl.textContent = '';
+            }
+        } catch (e) {
+            console.error('edit profile init error', e);
+        }
+    }
+
+    // Handle Photo Change
+    if (photoBtn) {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        photoBtn.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const base64 = event.target.result;
+                    currentUser.photo = base64;
+                    if (avatarEl) {
+                        avatarEl.style.backgroundImage = `url(${base64})`;
+                        avatarEl.style.backgroundSize = 'cover';
+                        avatarEl.textContent = '';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            const updatedUser = {
+                ...currentUser,
+                name: nameInput.value.trim(),
+                email: emailInput.value.trim(),
+                location: locationInput.value.trim(),
+                guest: false
+            };
+            
+            if (!updatedUser.name || !updatedUser.email) {
+                alert('Please provide at least a username and email.');
+                return;
+            }
+
+            localStorage.setItem('steadypath_user', JSON.stringify(updatedUser));
+            alert('Profile updated successfully!');
+            navigateTo('profile');
+        });
     }
 }
 
@@ -168,6 +281,91 @@ function toggleSettings() {
 // CHAT FUNCTIONALITY
 const RASA_URL = 'http://localhost:5005/webhooks/rest/webhook';
 const SENDER_ID = 'user_' + Math.random().toString(36).substr(2, 9);
+
+function addChatMessage(text, isUser) {
+    const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
+
+    const messageGroup = document.createElement('div');
+    messageGroup.className = `message-group ${isUser ? 'user' : 'bot'}`;
+
+    if (!isUser) {
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.textContent = '🤖';
+        messageGroup.appendChild(avatar);
+    }
+
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
+    contentDiv.textContent = text;
+    messageGroup.appendChild(contentDiv);
+
+    chatMessages.appendChild(messageGroup);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showChatTyping() {
+    const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
+
+    const messageGroup = document.createElement('div');
+    messageGroup.className = 'message-group bot';
+    messageGroup.id = 'typing-indicator';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'message-avatar';
+    avatar.textContent = '🤖';
+    messageGroup.appendChild(avatar);
+
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'typing-indicator';
+
+    for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'typing-dot';
+        typingDiv.appendChild(dot);
+    }
+
+    messageGroup.appendChild(typingDiv);
+    chatMessages.appendChild(messageGroup);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function hideTyping() {
+    const typing = document.getElementById('typing-indicator');
+    if (typing) typing.remove();
+}
+
+async function sendToRasa(message, metadata = null) {
+    try {
+        const payload = { sender: SENDER_ID, message: message };
+        if (metadata) {
+            payload.metadata = metadata;
+        }
+
+        const response = await fetch(RASA_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        hideTyping();
+        if (data && data.length > 0) {
+            data.forEach(botResponse => {
+                if (botResponse.text) addChatMessage(botResponse.text, false);
+            });
+        } else {
+            addChatMessage("I understand. How else can I help you?", false);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        hideTyping();
+        addChatMessage("I'm having trouble connecting. Make sure Rasa server is running: rasa run --enable-api", false);
+    }
+    const sendButton = document.getElementById('send-button');
+    if (sendButton) sendButton.disabled = false;
+}
 
 function initializeChat() {
     const chatMessages = document.getElementById('chat-messages');
@@ -213,92 +411,41 @@ function initializeChat() {
         showChatTyping();
         sendToRasa(message);
     }
-
-    function addChatMessage(text, isUser) {
-        const messageGroup = document.createElement('div');
-        messageGroup.className = `message-group ${isUser ? 'user' : 'bot'}`;
-
-        if (!isUser) {
-            const avatar = document.createElement('div');
-            avatar.className = 'message-avatar';
-            avatar.textContent = '🤖';
-            messageGroup.appendChild(avatar);
-        }
-
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'message-content';
-        contentDiv.textContent = text;
-        messageGroup.appendChild(contentDiv);
-
-        chatMessages.appendChild(messageGroup);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function showChatTyping() {
-        const messageGroup = document.createElement('div');
-        messageGroup.className = 'message-group bot';
-        messageGroup.id = 'typing-indicator';
-
-        const avatar = document.createElement('div');
-        avatar.className = 'message-avatar';
-        avatar.textContent = '🤖';
-        messageGroup.appendChild(avatar);
-
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'typing-indicator';
-
-        for (let i = 0; i < 3; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'typing-dot';
-            typingDiv.appendChild(dot);
-        }
-
-        messageGroup.appendChild(typingDiv);
-        chatMessages.appendChild(messageGroup);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function hideTyping() {
-        const typing = document.getElementById('typing-indicator');
-        if (typing) typing.remove();
-    }
-
-    async function sendToRasa(message, metadata = null) {
-        try {
-            const payload = { sender: SENDER_ID, message: message };
-            if (metadata) {
-                payload.metadata = metadata;
-            }
-
-            const response = await fetch(RASA_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await response.json();
-            hideTyping();
-            if (data && data.length > 0) {
-                data.forEach(botResponse => {
-                    if (botResponse.text) addChatMessage(botResponse.text, false);
-                });
-            } else {
-                addChatMessage("I understand. How else can I help you?", false);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            hideTyping();
-            addChatMessage("I'm having trouble connecting. Make sure Rasa server is running: rasa run --enable-api", false);
-        }
-        sendButton.disabled = false;
-    }
 }
 
 function initializeDashboard() {
-    // Add event listeners for quick action cards
-    const actionCards = document.querySelectorAll('.quick-action-card');
-    actionCards.forEach(card => {
-        card.addEventListener('click', function () {
-            const page = this.getAttribute('data-page');
+    const greetingEl = document.querySelector('.dashboard-greeting');
+    const userJson = localStorage.getItem('steadypath_user');
+    
+    if (greetingEl && userJson) {
+        try {
+            const user = JSON.parse(userJson);
+            const hour = new Date().getHours();
+            let timeOfDay = 'morning';
+            if (hour >= 12 && hour < 17) timeOfDay = 'afternoon';
+            else if (hour >= 17) timeOfDay = 'evening';
+            
+            greetingEl.textContent = `Good ${timeOfDay}, ${user.name || 'User'}`;
+        } catch (e) {
+            console.error('dashboard greeting error', e);
+        }
+    }
+
+    // Set profile photo if exists
+    const avatarEl = document.querySelector('.dashboard-header .profile-avatar-large');
+    if (avatarEl && userJson) {
+        const user = JSON.parse(userJson);
+        if (user.photo) {
+            avatarEl.style.backgroundImage = `url(${user.photo})`;
+            avatarEl.style.backgroundSize = 'cover';
+            avatarEl.textContent = '';
+        }
+    }
+
+    // Dashboard quick actions
+    document.querySelectorAll('.quick-action-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const page = card.getAttribute('data-page');
             if (page) navigateTo(page);
         });
     });
