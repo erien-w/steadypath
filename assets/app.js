@@ -278,8 +278,13 @@ function toggleSettings() {
     alert('Settings are coming soon in SteadyPath.');
 }
 
-// CHAT FUNCTIONALITY
-const RASA_URL = 'http://localhost:5005/webhooks/rest/webhook';
+// CHAT CONFIGURATION
+// For local testing: 'http://localhost:5005/webhooks/rest/webhook'
+// For production: 'https://your-rasa-backend.onrender.com/webhooks/rest/webhook'
+const RASA_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5005/webhooks/rest/webhook'
+    : 'https://your-rasa-backend.onrender.com/webhooks/rest/webhook'; // <-- Replace with your deployed URL
+
 const SENDER_ID = 'user_' + Math.random().toString(36).substr(2, 9);
 
 function addChatMessage(text, isUser) {
