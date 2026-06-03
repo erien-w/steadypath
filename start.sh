@@ -22,10 +22,10 @@ sleep 3
 
 echo "--- Starting Rasa Server on port $PORT ---"
 "$RASA_BIN" run \
+    --host 0.0.0.0 \
+    --port "$PORT" \
     --enable-api \
     --cors "*" \
-    --port "$PORT" \
-    --host 0.0.0.0 \
     --credentials credentials.yml \
     --endpoints endpoints.yml \
     --debug
