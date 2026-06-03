@@ -28,4 +28,5 @@ echo "--- Starting Rasa Server on port $PORT ---"
     --cors "*" \
     --credentials credentials.yml \
     --endpoints endpoints.yml \
-    --debug
+    --debug \
+    models/
