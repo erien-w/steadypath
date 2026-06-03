@@ -1,0 +1,20 @@
+# Rasa folders
+.rasa/
+models/
+.web/
+
+# Python environment
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+events.db
