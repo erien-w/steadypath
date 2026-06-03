@@ -73,6 +73,12 @@ nlu:
     - I don't feel very well
     - I am disappointed
     - super sad
+    - I feel overwhelmed
+    - I feel like I’m losing hope
+    - I’m not okay today
+    - I feel low
+    - I feel lonely
+    - I’m struggling and need someone to talk to
     - I'm so sad
     - sad
     - very sad
@@ -99,6 +105,10 @@ nlu:
     - help me with my job search
     - I need some career support
     - I want wellbeing help
+    - I need someone kind to talk to
+    - I feel down and need support
+    - give me advice like a friend
+    - I need emotional support
 
 - intent: resume_upload
   examples: |

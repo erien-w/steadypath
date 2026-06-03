@@ -159,11 +159,11 @@ function initializeLogin() {
             const nameEl = document.getElementById('login-username');
             const emailEl = document.getElementById('login-email');
             const passwordEl = document.getElementById('login-password');
-            
+
             const name = nameEl ? nameEl.value.trim() : '';
             const email = emailEl ? emailEl.value.trim() : '';
             const password = passwordEl ? passwordEl.value.trim() : '';
-            
+
             if (!name || !email || !password) {
                 alert('Please provide name, email and password to sign in.');
                 return;
@@ -205,7 +205,7 @@ function initializeProfile() {
     const userJson = localStorage.getItem('steadypath_user');
     let nameEl = document.querySelector('.profile-name');
     let avatarEl = document.querySelector('.profile-main-card .profile-avatar-large');
-    
+
     if (!userJson) {
         if (nameEl) nameEl.textContent = 'Guest';
         return;
@@ -213,7 +213,7 @@ function initializeProfile() {
     try {
         const user = JSON.parse(userJson);
         if (nameEl) nameEl.textContent = user.name || 'User';
-        
+
         // Update avatar if photo exists
         if (avatarEl && user.photo) {
             setAvatarPhoto(avatarEl, user.photo);
@@ -273,7 +273,7 @@ function initializeEditProfile() {
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
         photoBtn.addEventListener('click', () => fileInput.click());
-        
+
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -299,7 +299,7 @@ function initializeEditProfile() {
                 location: locationInput.value.trim(),
                 guest: false
             };
-            
+
             if (!updatedUser.name || !updatedUser.email) {
                 alert('Please provide at least a username and email.');
                 return;
@@ -394,16 +394,40 @@ function hideTyping() {
     if (typing) typing.remove();
 }
 
+function getResumeContext() {
+    try {
+        const savedData = localStorage.getItem('steadypath_career_data');
+        if (!savedData) return null;
+
+        const data = JSON.parse(savedData);
+        return {
+            resume_text: data.resumeText || '',
+            filename: data.fileName || '',
+            extracted_skills: data.skills || '',
+            industry: data.industry || '',
+            industry_label: data.industryLabel || '',
+            job_title: data.jobTitle || '',
+            focus_area: data.focus || '',
+            next_step: data.suggestion || ''
+        };
+    } catch (error) {
+        console.warn('No saved resume context available for chat:', error);
+        return null;
+    }
+}
+
 async function sendToRasa(message, metadata = null) {
     try {
+        const resumeContext = getResumeContext();
         const payload = { sender: SENDER_ID, message: message };
-        if (metadata) {
-            payload.metadata = metadata;
+        const mergedMetadata = { ...(resumeContext || {}), ...(metadata || {}) };
+        if (Object.keys(mergedMetadata).length > 0) {
+            payload.metadata = mergedMetadata;
         }
 
         const response = await fetch(RASA_URL, {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
@@ -418,20 +442,20 @@ async function sendToRasa(message, metadata = null) {
                 if (botResponse.text) addChatMessage(botResponse.text, false);
             });
         } else {
-            addChatMessage("I understand. How else can I help you?", false);
+            addChatMessage("I’m here with you, and I want to help. Tell me what’s been weighing on you today, and I’ll do my best to support you like a real friend.", false);
         }
     } catch (error) {
         console.error('Error:', error);
         hideTyping();
         addChatMessage(`Connection Failed: I can't reach the Rasa server at ${RASA_URL}`, false);
-        
+
         if (RASA_URL.includes('localhost')) {
             addChatMessage("This usually means your local Rasa server isn't running. Please run:", false);
             addChatMessage("rasa run --enable-api --cors \"*\"", false);
         } else {
             addChatMessage("This usually means your deployed backend on Railway is either starting up or having an issue. Please check your Railway logs.", false);
         }
-        
+
         // Add a retry button
         const chatMessages = document.getElementById('chat-messages');
         if (chatMessages) {
@@ -458,7 +482,7 @@ function initializeChat() {
     chatMessages.innerHTML = '';
 
     // Initial greeting
-    addChatMessage("Hi! I'm your personal assistant. How can I help you with your career or personal development today?", false);
+    addChatMessage("Hi, I’m here for you. I can listen, give supportive advice, and help with gentle next steps whenever you need it.", false);
 
     // Event listeners
     sendButton.addEventListener('click', handleChatMessage);
@@ -476,7 +500,7 @@ function initializeChat() {
             if (!message) return;
             addChatMessage(message, true);
             showChatTyping();
-            sendToRasa(message);
+            sendToRasa(message, getResumeContext());
         });
     });
 
@@ -489,14 +513,14 @@ function initializeChat() {
         sendButton.disabled = true;
 
         showChatTyping();
-        sendToRasa(message);
+        sendToRasa(message, getResumeContext());
     }
 }
 
 function initializeDashboard() {
     const greetingEl = document.querySelector('.dashboard-greeting');
     const userJson = localStorage.getItem('steadypath_user');
-    
+
     if (greetingEl && userJson) {
         try {
             const user = JSON.parse(userJson);
@@ -504,7 +528,7 @@ function initializeDashboard() {
             let timeOfDay = 'morning';
             if (hour >= 12 && hour < 17) timeOfDay = 'afternoon';
             else if (hour >= 17) timeOfDay = 'evening';
-            
+
             greetingEl.textContent = `Good ${timeOfDay}, ${user.name || 'User'}`;
         } catch (e) {
             console.error('dashboard greeting error', e);
@@ -647,7 +671,7 @@ function initializeCareer() {
         }
 
         showError('Scanning document... please wait.'); // Use error area as status
-        
+
         try {
             let text = '';
             if (isText) {
@@ -664,6 +688,8 @@ function initializeCareer() {
             }
 
             const analysis = parseResumeText(text);
+            analysis.resumeText = text;
+            analysis.fileName = file.name;
             showResumeSummary(analysis);
             clearError();
 
@@ -760,7 +786,7 @@ function initializeWellbeing() {
                         <button id="toast-chat-btn" style="background:white; color:#cc0000; border:none; padding:4px 10px; border-radius:8px; font-weight:700;">Open Chat</button>
                     </div>
                 `;
-                
+
                 let container = document.querySelector('.toast-container');
                 if (!container) {
                     container = document.createElement('div');
@@ -789,7 +815,7 @@ function initializeWellbeing() {
             addChatMessage(`I feel ${selectedMood} today.`, true);
             sendToRasa(`I feel ${selectedMood} today.`);
             showToast(`Check-in recorded: ${selectedMood}. Keep growing!`);
-            
+
             // Visual reset
             moodButtons.forEach(item => item.classList.remove('active'));
             selectedMood = null;

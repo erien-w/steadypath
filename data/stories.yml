@@ -32,7 +32,7 @@ stories:
 - story: support request
   steps:
   - intent: ask_support
-  - action: utter_support_info
+  - action: action_support_context
 
 - story: resume upload
   steps:

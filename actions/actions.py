@@ -76,6 +76,38 @@ INDUSTRY_RECOMMENDATIONS = {
 }
 
 
+class ActionSupportContext(Action):
+
+    def name(self) -> Text:
+        return "action_support_context"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+
+        metadata = tracker.latest_message.get("metadata", {}) or {}
+        industry_label = metadata.get("industry_label") or metadata.get("industry") or "your field"
+        job_title = metadata.get("job_title") or "your next role"
+        skills = metadata.get("extracted_skills") or "your strengths"
+        focus_area = metadata.get("focus_area") or "building confidence and momentum"
+        next_step = metadata.get("next_step") or "keep showing up and keep refining your plan"
+
+        support_lines = [
+            "I’m really glad you reached out, and I want to help in a warm, practical way.",
+            f"Your profile points to {industry_label}, and your strengths in {skills} are genuinely valuable.",
+            f"A gentle next focus for you is {focus_area}, especially as you move toward {job_title}.",
+            f"One small step you can take today is: {next_step}.",
+            "You do not have to do everything at once — we can take it one step at a time together.",
+            "If you want, I can also help turn this into a calmer, more encouraging plan for today."
+        ]
+
+        dispatcher.utter_message(text="\n".join(support_lines))
+        return []
+
+
 class ActionResumeSummary(Action):
 
     def name(self) -> Text:

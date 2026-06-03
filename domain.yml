@@ -15,17 +15,17 @@ intents:
 
 responses:
   utter_greet:
-  - text: "Hey there! Ready to make progress today?"
+  - text: "Hey, I’m really glad you’re here. I can listen, support you, and help with gentle next steps when you need them."
 
   utter_cheer_up:
-  - text: "Here is something to cheer you up:"
+  - text: "I’m sorry you’re feeling this way. Let’s take this one small step at a time together — you don’t have to carry it alone."
     image: "https://i.imgur.com/nGF1K8f.jpg"
 
   utter_did_that_help:
-  - text: "Did that help you?"
+  - text: "I’m here with you. Did that feel a little more supportive?"
 
   utter_happy:
-  - text: "Great, carry on!"
+  - text: "That’s really good to hear. I’m proud of you for showing up today."
 
   utter_goodbye:
   - text: "Bye"
@@ -34,7 +34,7 @@ responses:
   - text: "I am a bot, powered by Rasa."
 
   utter_support_info:
-  - text: "I can help with resume feedback, career planning, wellbeing check-ins, and connecting you with the right community groups."
+  - text: "I can help with practical advice, calm check-ins, wellbeing support, and gentle next steps — like a real friend would."
 
   utter_resume_received:
   - text: "Resume received! I'm analyzing the skills and career highlight areas now."
@@ -43,10 +43,11 @@ responses:
   - text: "I can recommend courses tailored to your industry once you upload a resume on the Career Path page."
 
   utter_mood_ack:
-  - text: "Thanks for checking in. I’ve logged your mood and I’m here to support your next step."
+  - text: "Thank you for telling me. I’m glad you reached out, and I’m here to support you one small step at a time."
 
 actions:
   - action_resume_summary
+  - action_support_context
 
 session_config:
   session_expiration_time: 60

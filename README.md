@@ -17,7 +17,14 @@ python3.10 -m venv .venv
 source .venv/bin/activate
 
 # Install dependencies
-pip install rasa
+pip install -r requirements.txt
+```
+
+If you just want to activate the existing environment later, use:
+
+```bash
+cd /Users/macbook/my-rasa-assistant
+source .venv/bin/activate
 ```
 
 ### 2. Start Services
@@ -26,6 +33,8 @@ You will need three terminal windows/tabs:
 #### Terminal 1: Web Server (Frontend)
 Hosts the user interface.
 ```bash
+cd /Users/macbook/my-rasa-assistant
+source .venv/bin/activate
 python3 -m http.server 8000
 ```
 Access the app at: [http://localhost:8000](http://localhost:8000)
@@ -33,6 +42,7 @@ Access the app at: [http://localhost:8000](http://localhost:8000)
 #### Terminal 2: Rasa Server (AI Backend)
 Handles the AI logic and chat processing.
 ```bash
+cd /Users/macbook/my-rasa-assistant
 source .venv/bin/activate
 rasa run --enable-api --cors "*"
 ```
@@ -41,6 +51,7 @@ rasa run --enable-api --cors "*"
 #### Terminal 3: Action Server (Custom Logic)
 Handles specialized tasks like resume analysis.
 ```bash
+cd /Users/macbook/my-rasa-assistant
 source .venv/bin/activate
 rasa run actions
 ```
