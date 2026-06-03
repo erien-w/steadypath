@@ -279,11 +279,11 @@ function toggleSettings() {
 }
 
 // CHAT CONFIGURATION
-// For local testing: 'http://localhost:5005/webhooks/rest/webhook'
-// For production: 'https://your-rasa-backend.onrender.com/webhooks/rest/webhook'
+// For local testing: 'http://localhost:8080/webhooks/rest/webhook/'
+// For production: 'https://steadypath-production.up.railway.app/webhooks/rest/webhook/'
 const RASA_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:5005/webhooks/rest/webhook'
-    : 'https://steadypath-production.up.railway.app/webhooks/rest/webhook';
+    ? 'http://localhost:8080/webhooks/rest/webhook/'
+    : 'https://steadypath-production.up.railway.app/webhooks/rest/webhook/';
 
 const SENDER_ID = 'user_' + Math.random().toString(36).substr(2, 9);
 
@@ -351,8 +351,13 @@ async function sendToRasa(message, metadata = null) {
 
         const response = await fetch(RASA_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload),
+            mode: 'cors',
+            cache: 'no-cache'
         });
         const data = await response.json();
         hideTyping();
