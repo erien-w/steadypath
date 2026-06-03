@@ -18,11 +18,11 @@ COPY . .
 RUN chmod +x start.sh
 
 # Expose ports
-EXPOSE 5005
+EXPOSE 8080
 EXPOSE 5055
 
 # Default environment variables
-ENV PORT=5005
+ENV PORT=8080
 ENV PORT_ACTIONS=5055
 
 # Start the application
