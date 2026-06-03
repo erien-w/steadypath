@@ -283,7 +283,7 @@ function toggleSettings() {
 // For production: 'https://your-rasa-backend.onrender.com/webhooks/rest/webhook'
 const RASA_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5005/webhooks/rest/webhook'
-    : 'https://steadypath-production.up.railway.app'
+    : 'https://steadypath-production.up.railway.app/webhooks/rest/webhook';
 
 const SENDER_ID = 'user_' + Math.random().toString(36).substr(2, 9);
 
@@ -366,11 +366,14 @@ async function sendToRasa(message, metadata = null) {
     } catch (error) {
         console.error('Error:', error);
         hideTyping();
-        addChatMessage("⚠️ Connection Refused: I can't reach the Rasa server at http://localhost:5005.", false);
-        addChatMessage("This usually means the server isn't running. Please follow these steps:", false);
-        addChatMessage("1️⃣ Open a terminal and run: rasa run --enable-api --cors \"*\"", false);
-        addChatMessage("2️⃣ Open another terminal and run: rasa run actions", false);
-        addChatMessage("3️⃣ Make sure you are in the project folder: /Users/macbook/my-rasa-assistant", false);
+        addChatMessage(`⚠️ Connection Failed: I can't reach the Rasa server at ${RASA_URL}`, false);
+        
+        if (RASA_URL.includes('localhost')) {
+            addChatMessage("This usually means your local Rasa server isn't running. Please run:", false);
+            addChatMessage("rasa run --enable-api --cors \"*\"", false);
+        } else {
+            addChatMessage("This usually means your deployed backend on Railway is either starting up or having an issue. Please check your Railway logs.", false);
+        }
         
         // Add a retry button
         const chatMessages = document.getElementById('chat-messages');
