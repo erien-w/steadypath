@@ -16,4 +16,5 @@ rasa run \
     --cors "*" \
     --credentials credentials.yml \
     --endpoints endpoints.yml \
-    --debug
+    --debug \
+    models/
